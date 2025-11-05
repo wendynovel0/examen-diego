@@ -1,0 +1,3 @@
+﻿version: "3.8"
+services:
+  # Agregar servicios y RabbitMQ aquí (opcional)
