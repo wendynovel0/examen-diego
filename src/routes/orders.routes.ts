@@ -1,8 +1,10 @@
-import { Router } from 'express';
-import { getOrders, createOrder, updateOrderState } from '../controllers/orders.controller';
+import { Router } from "express";
+import { getOrders, getOrderById, createOrder } from "../controllers/orders.controller.js";
 
-export const router = Router();
+const router = Router();
 
-router.get('/', getOrders);
-router.post('/', createOrder);
-router.patch('/:id/state', updateOrderState);
+router.get("/", getOrders);
+router.get("/:id", getOrderById);
+router.post("/", createOrder);
+
+export default router;

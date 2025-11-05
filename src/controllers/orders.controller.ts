@@ -1,17 +1,24 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from "express";
+import { OrdersService } from "../services/orders.service.js";
+
+const service = new OrdersService();
 
 export const getOrders = (req: Request, res: Response) => {
-  res.json({ message: 'List of orders' });
+  const orders = service.findAll();
+  res.json({ success: true, data: orders });
+};
+
+export const getOrderById = (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (!id) return res.status(400).json({ success: false, message: "Missing ID" });
+
+  const order = service.findById(id);
+  if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+
+  res.json({ success: true, data: order });
 };
 
 export const createOrder = (req: Request, res: Response) => {
-  const order = req.body;
-  // aquí iría la lógica para guardar en BD
-  res.status(201).json({ message: 'Order created', order });
-};
-
-export const updateOrderState = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { to_state } = req.body;
-  res.json({ message: `Order ${id} updated to ${to_state}` });
+  const order = service.create(req.body);
+  res.status(201).json({ success: true, data: order });
 };
