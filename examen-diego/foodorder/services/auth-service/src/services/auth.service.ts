@@ -1,17 +1,14 @@
-import jwt from "jsonwebtoken";
-
-const users: any[] = [];
+import { User } from "../models/User";
 
 export class AuthService {
-  async register(data: any) {
-    const newUser = { id: users.length + 1, ...data };
-    users.push(newUser);
-    return newUser;
+  async login({ email, password }: { email: string; password: string }) {
+    const user = await User.findOne({ where: { email, password } });
+    if (!user) throw new Error("Credenciales inválidas");
+    return user; // retornamos el usuario directamente
   }
 
-  async login({ username, password }: any) {
-    const user = users.find(u => u.username === username && u.password === password);
-    if (!user) throw new Error("Invalid credentials");
-    return jwt.sign({ id: user.id, role: user.role }, "secret", { expiresIn: "1h" });
+  async register(data: any) {
+    const newUser = await User.create(data);
+    return newUser;
   }
 }

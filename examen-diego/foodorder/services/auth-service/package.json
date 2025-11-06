@@ -4,17 +4,17 @@
     "main": "index.js",
     "scripts": {
         "build": "tsc",
-        "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+        "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
         "start": "node dist/server.js"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "description": "",
-    "type": "module",
     "dependencies": {
         "amqplib": "^0.10.9",
         "bcryptjs": "^3.0.3",
+        "cors": "^2.8.5",
         "dotenv": "^17.2.3",
         "express": "^5.1.0",
         "jsonwebtoken": "^9.0.2",

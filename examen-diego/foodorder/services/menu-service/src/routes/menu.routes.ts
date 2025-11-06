@@ -1,10 +1,9 @@
-import express from "express";
-import { MenuController } from "../controllers/menu.controller.js";
+import { Router } from "express";
+import { MenuController } from "../controllers/menu.controller";
 
-const router = express.Router();
+const router = Router();
 const controller = new MenuController();
 
-router.post("/", controller.create);
-router.get("/", controller.list);
+router.get("/menu", controller.getMenu.bind(controller));
 
 export default router;

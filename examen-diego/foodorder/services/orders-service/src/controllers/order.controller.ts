@@ -21,8 +21,20 @@ export class OrderController {
   async updateStatus(req: Request, res: Response) {
     const { id } = req.params;
     const { estado } = req.body;
-    const updated = await orderService.updateOrderStatus(id, estado);
+    const updated = await orderService.updateOrderStatus(Number(id), estado);
     if (!updated) return res.status(404).json({ success: false, message: "Pedido no encontrado" });
     res.json({ success: true, data: updated });
+  }
+
+  async byMesa(req: Request, res: Response) {
+    const { mesa } = req.params;
+    const orders = await orderService.getOrdersByMesa(mesa);
+    res.json({ success: true, data: orders });
+  }
+
+  async byUser(req: Request, res: Response) {
+    const { user_id } = req.params;
+    const orders = await orderService.getOrdersByUser(Number(user_id));
+    res.json({ success: true, data: orders });
   }
 }

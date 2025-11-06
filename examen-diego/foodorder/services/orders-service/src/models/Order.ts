@@ -1,5 +1,5 @@
 import { DataTypes, Model } from "sequelize";
-import { sequelize } from "../config/database.js";
+import { sequelize } from "../config/database";
 
 export class Order extends Model {
   public id!: number;
@@ -11,38 +11,15 @@ export class Order extends Model {
 
 Order.init(
   {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    user_id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
-    },
+    id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
+    user_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
     estado: {
-      type: DataTypes.ENUM(
-        "pendiente",
-        "preparando",
-        "listo",
-        "entregado",
-        "pagado",
-        "cancelado"
-      ),
-      defaultValue: "pendiente",
+      type: DataTypes.ENUM('pendiente','preparando','listo','entregado','pagado','cancelado'),
+      defaultValue: 'pendiente',
     },
-    total: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: true,
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
+    total: { type: DataTypes.DECIMAL(10,2), allowNull: true },
+    mesa: { type: DataTypes.STRING, allowNull: true }, // <-- agregado
+    created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   },
-  {
-    sequelize,
-    tableName: "orders",
-    timestamps: false,
-  }
+  { sequelize, tableName: 'orders', timestamps: false }
 );

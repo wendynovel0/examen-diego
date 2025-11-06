@@ -1,5 +1,6 @@
 export interface CreateOrderDTO {
-  mesa: number;
-  platillo: string;
+  user_id: number;
   total: number;
+  estado?: string;
+  mesa?: string; // <--- agregamos mesa como opcional
 }

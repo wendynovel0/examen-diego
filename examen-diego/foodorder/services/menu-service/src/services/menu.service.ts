@@ -1,13 +1,13 @@
-import { MenuRepositoryAdapter } from "../adapters/menu.repository.adapter.js";
+import { MenuItem } from "../models/MenuItem";
 
 export class MenuService {
-  private repo = new MenuRepositoryAdapter();
-
-  async create(data: any) {
-    return this.repo.create(data);
-  }
-
-  async list() {
-    return this.repo.findAll();
+  async getMenu() {
+    try {
+      const menu = await MenuItem.findAll();
+      return menu.map(item => item.toJSON()); // convierte a JSON simple
+    } catch (err) {
+      console.error("Error al obtener el menú:", err);
+      throw err;
+    }
   }
 }

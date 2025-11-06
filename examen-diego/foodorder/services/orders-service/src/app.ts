@@ -1,9 +1,11 @@
 import express from "express";
+import cors from "cors";
 import { connectDB } from "./config/database";
 import { Order, OrderItem } from "./models/index.js";
 import orderRoutes from "./routes/order.routes";
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.use("/orders", orderRoutes);
