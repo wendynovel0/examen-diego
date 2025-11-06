@@ -11,7 +11,6 @@ export class Order extends Model {
 
 Order.init(
   {
-    id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
     user_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
     estado: {
       type: DataTypes.ENUM('pendiente','preparando','listo','entregado','pagado','cancelado'),

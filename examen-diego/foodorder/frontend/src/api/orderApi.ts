@@ -2,6 +2,17 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:4001/orders";
 
+export interface OrderItem {
+  id: number;
+  order_id: number;
+  menu_id: number;
+  cantidad: number;
+  subtotal: string; // o number si lo conviertes
+  menu: {
+    nombre: string;
+    precio: string; // o number si lo conviertes
+  };
+}
 export interface Order {
   id: number;
   user_id: number;
@@ -9,6 +20,7 @@ export interface Order {
   estado: "pendiente" | "preparando" | "listo" | "entregado";
   total: string; // viene como string desde la DB
   created_at: string;
+  items?: OrderItem[];
 }
 
 interface OrderResponse {

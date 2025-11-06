@@ -1,14 +1,13 @@
-import { Order } from "../models/Order";
-import { OrderItem } from "../models/OrderItem";
+import { Order, OrderItem } from "../models";
+import { MenuItem } from "../models/MenuItem";
 
 export class OrderService {
-  // Crear pedido con items
   async createOrder(data: {
     user_id: number;
     mesa?: string;
     total: number;
     items: { menu_id: number; cantidad: number; subtotal: number }[];
-  }): Promise<Order> {
+  }) {
     const order = await Order.create({
       user_id: data.user_id,
       total: data.total,
@@ -22,16 +21,29 @@ export class OrderService {
     }));
     await OrderItem.bulkCreate(itemsWithOrderId);
 
-    return order;
+    // 👇 Incluye los items al devolver el pedido
+    return await Order.findByPk(order.id, { include: [{ model: OrderItem, as: "items" }] });
   }
 
-  // Listar todos los pedidos
-  async getOrders(): Promise<Order[]> {
-    return Order.findAll();
+  async getOrders() {
+    return Order.findAll({
+      include: [
+        {
+          model: OrderItem,
+          as: "items",
+          include: [
+            {
+              model: MenuItem,
+              as: "menu",
+              attributes: ["nombre", "precio"], // 👈 solo lo necesario
+            },
+          ],
+        },
+      ],
+    });
   }
 
-  // Actualizar estado del pedido
-  async updateOrderStatus(id: number, estado: Order["estado"]): Promise<Order | null> {
+  async updateOrderStatus(id: number, estado: string) {
     const order = await Order.findByPk(id);
     if (!order) return null;
     order.estado = estado;
@@ -39,13 +51,41 @@ export class OrderService {
     return order;
   }
 
-  // Consultar pedidos por mesa
-  async getOrdersByMesa(mesa: string): Promise<Order[]> {
-    return Order.findAll({ where: { mesa } });
+  async getOrdersByMesa(mesa: string) {
+    return Order.findAll({
+      where: { mesa },
+      include: [
+        {
+          model: OrderItem,
+          as: "items",
+          include: [
+            {
+              model: MenuItem,
+              as: "menu",
+              attributes: ["nombre", "precio"],
+            },
+          ],
+        },
+      ],
+    });
   }
 
-  // Consultar pedidos por cliente (usuario)
-  async getOrdersByUser(user_id: number): Promise<Order[]> {
-    return Order.findAll({ where: { user_id } });
+  async getOrdersByUser(user_id: number) {
+    return Order.findAll({
+      where: { user_id },
+      include: [
+        {
+          model: OrderItem,
+          as: "items",
+          include: [
+            {
+              model: MenuItem,
+              as: "menu",
+              attributes: ["nombre", "precio"],
+            },
+          ],
+        },
+      ],
+    });
   }
 }

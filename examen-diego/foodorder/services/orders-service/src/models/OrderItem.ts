@@ -1,5 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/database";
+import { MenuItem } from "./MenuItem";
 
 export class OrderItem extends Model {
   public id!: number;
@@ -39,3 +40,5 @@ OrderItem.init(
     timestamps: false,
   }
 );
+MenuItem.hasMany(OrderItem, { foreignKey: "menu_id" });
+OrderItem.belongsTo(MenuItem, { foreignKey: "menu_id", as: "menu" });

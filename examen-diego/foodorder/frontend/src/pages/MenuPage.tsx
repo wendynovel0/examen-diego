@@ -73,12 +73,20 @@ export function MenuPage() {
 
   setLoading(true);
   try {
-    await createOrder({
-      user_id: 1,
-      total,
-      mesa: "A1",
-      items: itemsPayload, // << esto es clave
-    });
+  console.log("Payload enviado:", {
+    user_id: 2,
+    total,
+    mesa: "A2",
+    items: itemsPayload,
+  });
+
+  await createOrder({
+    user_id: 2,
+    total,
+    mesa: "A2",
+    items: itemsPayload,
+  });
+
     alert("Pedido creado correctamente");
     setSelectedItems([]);
     fetchOrders(); // refrescar pedidos
@@ -110,92 +118,90 @@ export function MenuPage() {
   });
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Menú</h2>
+  <div className="p-6 max-w-3xl mx-auto fade-in">
+    <h2 className="text-3xl font-bold mb-6 text-purple-800">Menú del día</h2>
 
-      <ul className="space-y-2">
-        {menu.map((item) => (
-          <li key={item.id} className="bg-white p-3 rounded shadow flex justify-between items-center">
-            <div>
-              <p className="font-medium">{item.nombre}</p>
-              <p className="text-gray-600">${item.precio}</p>
-            </div>
-            <button
-              disabled={!item.disponible}
-              onClick={() => handleSelect(item.id)}
-              className="bg-purple-700 text-white px-3 py-1 rounded hover:bg-purple-800 disabled:bg-gray-400"
-            >
-              Agregar
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      {selectedItems.length > 0 && (
-        <div className="mt-6 bg-gray-100 p-4 rounded shadow">
-          <h3 className="font-bold mb-2">Pedido:</h3>
-          <ul>
-            {selectedItems.map((i) => {
-              const item = menu.find((m) => m.id === i.id);
-              return (
-                <li key={i.id}>
-                  {item?.nombre} x {i.cantidad} = ${item ? item.precio * i.cantidad : 0}
-                </li>
-              );
-            })}
-          </ul>
-          <p className="font-bold mt-2">
-            Total: $
-            {selectedItems.reduce((sum, i) => {
-              const item = menu.find((m) => m.id === i.id);
-              return sum + (item ? item.precio * i.cantidad : 0);
-            }, 0)}
-          </p>
+    <ul className="grid gap-4 sm:grid-cols-2">
+      {menu.map((item) => (
+        <li key={item.id} className="card flex justify-between items-center">
+          <div>
+            <p className="font-semibold text-lg">{item.nombre}</p>
+            <p className="text-gray-500">${item.precio}</p>
+          </div>
           <button
-            onClick={handleCreateOrder}
-            disabled={loading}
-            className="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            disabled={!item.disponible}
+            onClick={() => handleSelect(item.id)}
+            className={`btn-primary ${!item.disponible && 'opacity-50 cursor-not-allowed'}`}
           >
-            {loading ? "Creando..." : "Crear Pedido"}
+            Agregar
           </button>
-        </div>
-      )}
+        </li>
+      ))}
+    </ul>
 
-      <h2 className="text-xl font-bold mt-8 mb-4">Pedidos</h2>
-
-      {/* Filtros */}
-      <div className="mb-4 flex space-x-4">
-        <input
-          type="text"
-          placeholder="Filtrar por cliente (ID)"
-          value={filterUser}
-          onChange={(e) => setFilterUser(e.target.value)}
-          className="border p-1 rounded"
-        />
-        <input
-          type="text"
-          placeholder="Filtrar por mesa"
-          value={filterMesa}
-          onChange={(e) => setFilterMesa(e.target.value)}
-          className="border p-1 rounded"
-        />
+    {selectedItems.length > 0 && (
+      <div className="mt-8 card">
+        <h3 className="text-xl font-bold mb-3">Tu pedido 🧾</h3>
+        <ul className="space-y-1">
+          {selectedItems.map((i) => {
+            const item = menu.find((m) => m.id === i.id);
+            return (
+              <li key={i.id} className="flex justify-between">
+                <span>{item?.nombre} × {i.cantidad}</span>
+                <span className="font-semibold">${item ? item.precio * i.cantidad : 0}</span>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="font-bold mt-3 text-right text-lg text-purple-700">
+          Total: ${selectedItems.reduce((sum, i) => {
+            const item = menu.find((m) => m.id === i.id);
+            return sum + (item ? item.precio * i.cantidad : 0);
+          }, 0)}
+        </p>
         <button
-          onClick={fetchOrders}
-          className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
+          onClick={handleCreateOrder}
+          disabled={loading}
+          className="btn-primary w-full mt-4"
         >
-          Refrescar
+          {loading ? "Creando..." : "Confirmar Pedido"}
         </button>
       </div>
+    )}
 
-      {loadingOrders ? (
-        <p>Cargando pedidos...</p>
-      ) : (
-        <ul className="space-y-2">
-          {filteredOrders.map((o) => (
-            <li key={o.id} className="bg-white p-3 rounded shadow flex justify-between items-center">
+    <h2 className="text-3xl font-bold mt-12 mb-4 text-purple-800">Pedidos actuales</h2>
+
+    <div className="mb-4 flex flex-wrap gap-2">
+      <input
+        type="text"
+        placeholder="Filtrar por cliente (ID)"
+        value={filterUser}
+        onChange={(e) => setFilterUser(e.target.value)}
+        className="input w-full sm:w-1/3"
+      />
+      <input
+        type="text"
+        placeholder="Filtrar por mesa"
+        value={filterMesa}
+        onChange={(e) => setFilterMesa(e.target.value)}
+        className="input w-full sm:w-1/3"
+      />
+      <button onClick={fetchOrders} className="btn-secondary">Refrescar</button>
+    </div>
+
+    {loadingOrders ? (
+      <p className="text-center text-gray-600">Cargando pedidos...</p>
+    ) : (
+      <ul className="space-y-3">
+        {filteredOrders.map((o) => (
+          <li key={o.id} className="card">
+            <div className="flex justify-between items-center mb-2">
               <div>
-                <p>
-                  ID: {o.id} | Cliente: {o.user_id} | Mesa: {o.mesa} | Total: ${o.total} | Estado: {o.estado}
+                <p className="text-sm">
+                  <span className="font-semibold">Pedido #{o.id}</span> — Mesa {o.mesa} — Cliente {o.user_id}
+                </p>
+                <p className="text-gray-600 text-sm">
+                  Estado: <span className="font-semibold text-purple-700">{o.estado}</span>
                 </p>
               </div>
               <div className="space-x-2">
@@ -203,16 +209,34 @@ export function MenuPage() {
                   <button
                     key={status}
                     onClick={() => handleUpdateStatus(o.id, status as Order["estado"])}
-                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                    className="btn-secondary capitalize"
                   >
                     {status}
                   </button>
                 ))}
               </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
+            </div>
+
+            {/* 🧾 Lista de items del pedido */}
+            {o.items && Array.isArray(o.items) && o.items.length > 0 && (
+              <ul className="pl-4 text-sm text-gray-700">
+                {o.items.map((item, idx) => (
+                  <li key={idx} className="flex justify-between">
+                    <span>
+                      Producto {item.menu?.nombre} × {item.cantidad}
+                    </span>
+                    <span>${item.subtotal}</span>
+                  </li>
+                ))}
+                <li className="font-semibold text-right mt-1 text-purple-700">
+                  Total: ${o.total}
+                </li>
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+);
 }
